@@ -14,7 +14,6 @@ exports.signUp = (req, res) => {
       } else {
         bcrypt.hash(password, 10, (err, hash) => {
           if (err) {
-            console.log(err);
             res.status(500).json({
               message: "Internal server error",
             });
