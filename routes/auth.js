@@ -1,8 +1,8 @@
 const express=require('express');
 const routes=express.Router();
-const{signUp}=require('../controllers/auth');
+const{signUp,signIn}=require('../controllers/auth');
 
 routes.post('/signUp',signUp);
-// routes.post('/signIn',signIn);
+routes.post('/signIn',signIn);
 module.exports=routes;
 

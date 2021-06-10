@@ -58,3 +58,49 @@ exports.signUp = (req, res) => {
       });
     });
 };
+
+exports.signIn=(req,res)=>{
+  const {email, password}=req.body;
+client.query(`SELECT * FROM users where email='${email}';`)
+.then((data)=>{
+  const exists=data.rows;
+  if(exists===0){
+    res.status(300).json(
+      {
+        message:"User does not exists please signUp",
+      }
+    );
+}
+else{
+  bcrypt.compare(password,exists[0].password,(err,result)=>{
+if(err){
+  res.status(500).json({
+    error:"Server down try later!",
+  });
+}
+else if(result===true){
+  const token=jwt.sign({
+    email:email,
+  },
+  process.env.SECRET_KEY
+  );
+res.status(200).json({
+  message:"Signed In Successfully",
+  token:token
+});
+}
+else{
+  res.status(400).json({
+    error:"Incorrect password",
+  });
+}
+  })
+}
+
+})
+.catch((err)=>{
+res.status(500).json({
+  error:"Internal server error",
+})
+});
+}
