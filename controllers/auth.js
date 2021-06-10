@@ -26,17 +26,16 @@ exports.signUp = (req, res) => {
           };
           const token = jwt.sign(
             {
-              alg: "HS256",
-              typ: "JWT",
-            },
-            {
               email: email,
             },
-            process.env.SECRET_KEY
+            process.env.SECRET_KEY,
+            {
+              expiresIn:'12h'
+            }
           );
           client
             .query(
-              `INSERT INTO users (name , email, password ,contact) VALUES('${user.name}','${user.email},'${user.password}','${user.contact}');`
+              `INSERT INTO users (name , email, password ,contact) VALUES('${user.name}','${user.email}','${user.password}','${user.contact}' );`
             )
             .then((data) => {
               res.status(200).json({
@@ -45,6 +44,7 @@ exports.signUp = (req, res) => {
               });
             })
             .catch((err) => {
+              console.log("hi");
               res.status(500).json({
                 error: "Servor error try after sometime",
               });
@@ -54,7 +54,7 @@ exports.signUp = (req, res) => {
       })
       .catch((err) => {
         res.status(500).json({
-        error: "Servor error try after sometime",
+        error: "Servor error try afte-r sometime",
       });
     });
 };
