@@ -1,6 +1,7 @@
 const client = require("../configurations/db");
-
+const Razorpay = require('razorpay');
 exports.block = (req, res) => {
+  // console.log(process.env.razorpay_api_key)
   let total = 0;
   let hall = "";
   let booking_date = new Date();
@@ -29,7 +30,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
     total += 120;
   }
   total *= 100;
-};
+
 
 let flag=1;
 let seats_query="";
@@ -53,9 +54,9 @@ for (let i = 0; i < req.body.seats.length; i++) {
   .then((database_res)=>{
       hall=database_res.rows[0].hall;
       for (let i=0;i<database_res.rows.length;i++){
-          if(database_res.rows.seats[i].booked==1||database_res.rows.seats[i].blocked==1){
+          if(database_res.rows[i].booked==1||database_res.rows[i].blocked==1){
             flag=0;
-          }
+          }  
       }
   }).then(()=>{
       if(flag===1){
@@ -76,7 +77,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
       client.query(`INSERT INTO bookings (order_id,movie_id,date,slot,seat_text,hall,total,max_time,booking_date,email) values ('${order.id}',${req.body.movie_id},'${req.body.date}','${req.body.slot}','${final_seats}','${hall}',${total},'${max_time}','${booking_date}','abc@gmail.com')`)
       .then(() => {
           res.status(200).json({
-              order_id:order_id,
+              order_id:order.id,
           })
         // obj = {
         //   order_id : order.id
@@ -85,6 +86,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
           })
         })
       }).catch((err)=>{
+        // console.log(err)
           res.status(500).json({
               error:"Server error Try again!"
           })
@@ -97,11 +99,12 @@ for (let i = 0; i < req.body.seats.length; i++) {
     }
   })
   .catch((err)=>{
+    // console.log(err)
       res.status(500).json({
           error:"Database error"
       })
   })
-
+};
   exports.showPay=(req,res)=>{
     client.query(`SELECT * FROM bookings where order_id = '${req.body.order_id}'`)
     .then((database_res) => {
@@ -114,7 +117,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
   }
 
   exports.checkPay=(req,res)=>{
-
+    //  console.log("hii")
     var request = require('request');
     // console.log(req.body)
     request(`https://${process.env.razorpay_api_key}:${process.env.razorpay_secret_key}@api.razorpay.com/v1/payments/${req.body.payment_id}`, function (error, response, body) {
@@ -137,10 +140,11 @@ for (let i = 0; i < req.body.seats.length; i++) {
           // console.log(seat_string);
           client.query(`UPDATE movies SET booked = 1, email = 'abc@gmail.com' WHERE date = '${data.rows[0].date}' AND slot = '${data.rows[0].slot}' AND movie_id = ${data.rows[0].movie_id} AND (${seat_string})`)
           .then((database_res) => {
-            res.Status(200).json({
+            res.status(200).json({
                 message:"Payment Successful",
             });
           }).catch((err)=>{
+            // console.log(err)
               res.status(500).json({
                   error:"Database problem",
               })
