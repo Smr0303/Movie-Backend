@@ -1,12 +1,14 @@
 const client = require("../configurations/db");
 const Razorpay = require('razorpay');
 exports.block = (req, res) => {
-  // console.log(process.env.razorpay_api_key)
+
   let total = 0;
   let hall = "";
+  let slot_flag = 1;
   let booking_date = new Date();
+  let current_min = booking_date.getHours()*60 + booking_date.getMinutes();
   let dd = booking_date.getDate();
-  let mm = booking_date.getMonth();
+  let mm = booking_date.getMonth()+1;
   let yyyy = booking_date.getFullYear();
   let max_time = booking_date.getTime();
 
@@ -19,6 +21,69 @@ exports.block = (req, res) => {
   }
   booking_date = `${yyyy}-${mm}-${dd}`;
 
+// -------------------------------------------------------------------------------------------------------
+if(req.body.date<booking_date)
+{
+    slot_flag = 0;
+    res.status(400).json({
+    message:"Bad request try again"
+});
+}
+else if(req.body.date==booking_date)
+{
+if(req.body.slot =='slot1' && current_min+20>540)
+{
+    slot_flag = 0;
+    res.status(400).json({
+    message:"Bad request try again"
+});
+}
+else if(req.body.slot =='slot2' && current_min+20>690)
+{
+    slot_flag = 0;
+    res.status(400).json({
+    message:"Bad request try again"
+});
+}
+else if(req.body.slot =='slot3' && current_min+20>840)
+{
+    slot_flag = 0;
+    res.status(400).json({
+    message:"Bad request try again"
+});
+}
+else if(req.body.slot =='slot4' && current_min+20>990)
+{
+    slot_flag = 0;
+    res.status(400).json({
+    message:"Bad request try again"
+});
+}
+else if(req.body.slot =='slot5' && current_min+20>1140)
+{
+    slot_flag = 0;
+    res.status(400).json({
+    message:"Bad request try again"
+});
+}
+else if(req.body.slot =='slot6' && current_min+20>1290)
+{
+    slot_flag = 0;
+    res.status(400).json({
+    message:"Bad request try again"
+});
+}
+else if(req.body.slot =='slot7' && current_min+20>1430)
+{
+    slot_flag = 0;
+    res.status(400).json({
+    message:"Bad request try again"
+});
+}
+}
+// -------------------------------------------------------------------------------------------------------
+if(slot_flag == 1)
+{
 for (let i = 0; i < req.body.seats.length; i++) {
     let x = Number(req.body.seats[i].slice(req.body.seats[i].indexOf("t") + 1,req.body.seats[i].length)
     );
@@ -104,6 +169,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
           error:"Database error"
       })
   })
+}
 };
   exports.showPay=(req,res)=>{
     client.query(`SELECT * FROM bookings where order_id = '${req.body.order_id}'`)
