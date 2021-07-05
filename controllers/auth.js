@@ -54,7 +54,7 @@ exports.signUp = (req, res) => {
       })
       .catch((err) => {
         res.status(500).json({
-        error: "Servor error try afte-r sometime",
+        error: "Servor error try after sometime",
       });
     });
 };
@@ -79,10 +79,14 @@ if(err){
   });
 }
 else if(result===true){
-  const token=jwt.sign({
+  const token=jwt.sign(
+  {
     email:email,
   },
-  process.env.SECRET_KEY
+  process.env.SECRET_KEY,
+  {
+    expiresIn:'12h'
+  }
   );
 res.status(200).json({
   message:"Signed In Successfully",
