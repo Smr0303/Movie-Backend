@@ -125,10 +125,10 @@ for (let i = 0; i < req.body.seats.length; i++) {
       }
   }).then(()=>{
       if(flag===1){
-          client.query(`UPDATE movies SET blocked = 1, email = 'abc@gmail.com' WHERE date = '${req.body.date}' AND slot = '${req.body.slot}' AND movie_id = ${req.body.movie_id} AND (${seats_query})`)
+          client.query(`UPDATE movies SET blocked = 1, email = '${req.body.email}' WHERE date = '${req.body.date}' AND slot = '${req.body.slot}' AND movie_id = ${req.body.movie_id} AND (${seats_query})`)
           .then((database_res)=>{
             setTimeout(() => {
-                client.query(`UPDATE movies SET blocked = 0 WHERE date = '${req.body.date}' AND slot = '${req.body.slot}' AND movie_id = ${req.body.movie_id} AND (${seats_query})`)
+                client.query(`UPDATE movies SET blocked = 0, email = '' WHERE date = '${req.body.date}' AND slot = '${req.body.slot}' AND movie_id = ${req.body.movie_id} AND (${seats_query})`)
               }, 20000);
 
               var instance = new Razorpay({ key_id: `${process.env.razorpay_api_key}`, key_secret: `${process.env.razorpay_secret_key}` })
@@ -139,7 +139,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
     };
     instance.orders.create(options, function (err, order) {
   
-      client.query(`INSERT INTO bookings (order_id,movie_id,date,slot,seat_text,hall,total,max_time,booking_date,email) values ('${order.id}',${req.body.movie_id},'${req.body.date}','${req.body.slot}','${final_seats}','${hall}',${total},'${max_time}','${booking_date}','abc@gmail.com')`)
+      client.query(`INSERT INTO bookings (order_id,movie_id,date,slot,seat_text,hall,total,max_time,booking_date,email) values ('${order.id}',${req.body.movie_id},'${req.body.date}','${req.body.slot}','${final_seats}','${hall}',${total},'${max_time}','${booking_date}','${req.body.email}')`)
       .then(() => {
           res.status(200).json({
               order_id:order.id,
@@ -174,9 +174,16 @@ for (let i = 0; i < req.body.seats.length; i++) {
   exports.showPay=(req,res)=>{
     client.query(`SELECT * FROM bookings where order_id = '${req.body.order_id}'`)
     .then((database_res) => {
+      if(database_res.rows[0].email == req.body.email)
       res.status(200).send(database_res.rows);
+      else
+      {
+      res.status(400).json({
+        error:"Database error try again",
+    })
+  }
       }).catch((err)=>{
-          res.status.json({
+          res.status(500).json({
               error:"Database error try again",
           })
       })
@@ -187,7 +194,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
     var request = require('request');
     // console.log(req.body)
     request(`https://${process.env.razorpay_api_key}:${process.env.razorpay_secret_key}@api.razorpay.com/v1/payments/${req.body.payment_id}`, function (error, response, body) {
-      // console.log('Response:', JSON.parse(body).captured);
+      // console.log('Response:', JSON.parse(body));
       // res.sendStatus(200);
       client.query(`SELECT * FROM bookings where order_id = '${req.body.order_id}'`).then((data) => {
         // console.log(data.rows);

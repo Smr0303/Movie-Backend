@@ -8,7 +8,7 @@ exports.signUp = (req, res) => {
     .then((data) => {
       const exists = data.rows;
       if (exists.length !== 0) {
-        res.status(500).json({
+        res.status(400).json({
           error: "User alerady exists",
         });
       } else {
@@ -61,20 +61,20 @@ exports.signUp = (req, res) => {
 
 exports.signIn=(req,res)=>{
   const {email, password}=req.body;
-client.query(`SELECT * FROM users where email='${email}';`)
+client.query(`SELECT * FROM users where email='${email}'`)
 .then((data)=>{
   const exists=data.rows;
-  if(exists===0){
-    res.status(300).json(
+  if(exists.length===0){
+    res.status(400).json(
       {
-        message:"User does not exists please signUp",
+        error:"User does not exist",
       }
     );
 }
 else{
   bcrypt.compare(password,exists[0].password,(err,result)=>{
 if(err){
-  res.status(500).json({
+  res.status(400).json({
     error:"Server down try later!",
   });
 }
