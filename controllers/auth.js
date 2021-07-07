@@ -108,3 +108,29 @@ res.status(500).json({
 })
 });
 }
+
+exports.changePassword=(req,res)=>{
+const{oldPass,newPass,email}=req.body;
+client.query(`SELECT password FROM users where email=${email};`)
+.then((res)=>{
+  const Pass=res.password;
+  if(oldPass===Pass){
+    res.status(400).json({
+      message:"Same as new Password"
+    })
+  }
+  else{
+    client.query(`UPDATE users SET password=${newPass} where email=${email};`)
+    .then((database_res)=>{
+res.status(200).json({
+  message:"Password changed successfully!!"
+});
+    }).catch((err)=>{
+      res.status(500).json({
+        error:"Internal Server error"
+      })
+    })
+  }
+
+})
+}
