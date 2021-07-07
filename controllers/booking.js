@@ -1,6 +1,113 @@
 const client = require("../configurations/db");
 const Razorpay = require('razorpay');
 exports.block = (req, res) => {
+  let title = "";
+  let poster_path = "";
+
+// -------------------------------- poster and title -------------------------------------------------
+if(req.body.movie_id == 337404)
+ {
+ title = 'Cruella'
+ poster_path = '/rTh4K5uw9HypmpGslcKd4QfHl93.jpg'
+ }
+else if(req.body.movie_id == 423108)
+ {
+ title = 'The Conjuring: The Devil Made Me Do It'
+ poster_path = '/xbSuFiJbbBWCkyCCKIMfuDCA4yV.jpg'
+ }
+else if(req.body.movie_id == 637649)
+ {
+ title = 'Wrath of Man'
+ poster_path = '/M7SUK85sKjaStg4TKhlAVyGlz3.jpg'
+ }
+else if(req.body.movie_id == 717192)
+ {
+ title = 'Ferry'
+ poster_path = '/srYGZ1rd9rvzwAltcKREUdS1JSQ.jpg'
+ }
+else if(req.body.movie_id == 460465)
+ {
+ title = 'Mortal Kombat'
+ poster_path = '/nkayOAUBUu4mMvyNf9iHSUiPjF1.jpg'
+ }
+else if(req.body.movie_id == 503736)
+ {
+ title = 'Army of the Dead'
+ poster_path = '/z8CExJekGrEThbpMXAmCFvvgoJR.jpg'
+ }
+else if(req.body.movie_id == 632357)
+ {
+ title = 'The Unholy'
+ poster_path = '/bShgiEQoPnWdw4LBrYT5u18JF34.jpg'
+ }
+else if(req.body.movie_id == 817451)
+ {
+ title = 'Endangered Species'
+ poster_path = '/ccsSqbpEqr2KK9eMvoeF8ERFCd5.jpg'
+ }
+else if(req.body.movie_id == 399566)
+ {
+ title = 'Godzilla vs. Kong'
+ poster_path = '/pgqgaUx1cJb5oZQQ5v0tNARCeBp.jpg'
+ }
+else if(req.body.movie_id == 520763)
+ {
+ title = 'A Quiet Place Part II'
+ poster_path = '/4q2hz2m8hubgvijz8Ez0T2Os2Yv.jpg'
+ }
+else if(req.body.movie_id == 567189)
+ {
+ title = `Tom Clancy's Without Remorse`
+ poster_path = '/rEm96ib0sPiZBADNKBHKBv5bve9.jpg'
+ }
+else if(req.body.movie_id == 602734)
+ {
+ title = 'Spiral: From the Book of Saw'
+ poster_path = '/lcyKve7nXRFgRyms9M1bndNkKOx.jpg'
+ }
+else if(req.body.movie_id == 804435)
+ {
+ title = 'Vanquish'
+ poster_path = '/AoWY1gkcNzabh229Icboa1Ff0BM.jpg'
+ }
+else if(req.body.movie_id == 578701)
+ {
+ title = 'Those Who Wish Me Dead'
+ poster_path = '/xCEg6KowNISWvMh8GvPSxtdf9TO.jpg'
+ }
+else if(req.body.movie_id == 808023)
+ {
+ title = 'The Virtuoso'
+ poster_path = '/vXHzO26mJaOt4VO7ZFiM6No5ScT.jpg'
+ }
+else if(req.body.movie_id == 726429)
+ {
+ title = 'Xtreme'
+ poster_path = '/cwUhVcDeMYYeu8fq5q1OPOoSbZ7.jpg'
+ }
+else if(req.body.movie_id == 823855)
+ {
+ title = 'I Am All Girls'
+ poster_path = '/m6bUeV4mczG3z2YXXr5XDKPsQzv.jpg'
+ }
+else if(req.body.movie_id == 615457)
+ {
+ title = 'Nobody'
+ poster_path = '/oBgWY00bEFeZ9N25wWVyuQddbAo.jpg'
+ }
+else if(req.body.movie_id == 791373)
+ {
+ title = `Zack Snyder's Justice League`
+ poster_path = '/tnAuB8q5vv7Ax9UAEje5Xi4BXik.jpg'
+ }
+else if(req.body.movie_id == 615678)
+ {
+ title = 'Thunder Force'
+ poster_path = '/3mKMWP5OokB7QpcOMA1yl8BXFAF.jpg'
+ }
+// --------------------------------poster and title end ----------------------------------------------
+
+
 
   let total = 0;
   let hall = "";
@@ -139,7 +246,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
     };
     instance.orders.create(options, function (err, order) {
   
-      client.query(`INSERT INTO bookings (order_id,movie_id,date,slot,seat_text,hall,total,max_time,booking_date,email) values ('${order.id}',${req.body.movie_id},'${req.body.date}','${req.body.slot}','${final_seats}','${hall}',${total},'${max_time}','${booking_date}','${req.body.email}')`)
+      client.query(`INSERT INTO bookings (order_id,movie_id,date,slot,seat_text,hall,total,max_time,booking_date,email,title,poster_path) values ('${order.id}',${req.body.movie_id},'${req.body.date}','${req.body.slot}','${final_seats}','${hall}',${total},'${max_time}','${booking_date}','${req.body.email}','${title}','${poster_path}')`)
       .then(() => {
           res.status(200).json({
               order_id:order.id,
