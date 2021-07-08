@@ -22,3 +22,18 @@ exports.showUser=(req,res)=>{
           })
       })
   }
+
+  
+  exports.contactUs = (req, res) => {
+    const {reason,Name,organisation,region,number,email}=req.body;
+  client
+    .query(``)
+    .then((data) => {
+      res.status(200).json({
+        message: "We will contact you soon",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({ error: "Error from server side try again" });
+    });
+};
