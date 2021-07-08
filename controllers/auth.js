@@ -111,26 +111,80 @@ res.status(500).json({
 
 exports.changePassword=(req,res)=>{
 const{oldPass,newPass,email}=req.body;
-client.query(`SELECT password FROM users where email=${email};`)
-.then((res)=>{
-  const Pass=res.password;
-  if(oldPass===Pass){
+client.query(`SELECT password FROM users where email='${email}'`)
+.then((database_res)=>{
+  const Pass=database_res.rows[0].password;
+  // console.log(Pass)
+  if(oldPass===newPass){
     res.status(400).json({
-      message:"Same as new Password"
+      message:"Please Enter A different Password"
     })
   }
   else{
-    client.query(`UPDATE users SET password=${newPass} where email=${email};`)
-    .then((database_res)=>{
-res.status(200).json({
-  message:"Password changed successfully!!"
-});
-    }).catch((err)=>{
-      res.status(500).json({
-        error:"Internal Server error"
-      })
-    })
-  }
+    bcrypt.compare(oldPass,Pass,(err,result)=>{
+      if(err){
+        res.status(400).json({
+          message:"Server down try later!",
+        });
+      }
+      else if(result===true){
+        bcrypt.hash(newPass, 10, (err, hash) => {
+          if (err) {
+            res.status(500).json({
+              message: "Internal server error",
+            });
+          }
+          else{
+            client.query(`UPDATE users SET password = '${hash}' WHERE email = '${email}'`).then(() => {
+              res.status(200).json({
+                message:"Password Changed Successfully!"
+              });
+            }).catch((error) => {
+              res.status(500).json({
+                message:"Database Error :)"
+              });
+            })
+          }
+        })
 
-})
+      }
+      else{
+        res.status(400).json({
+          message:"Incorrect Old password"
+        });
+      }
+        })
+  }
+  }).catch((error) => {
+    res.status(500).json({
+      message:"Database Error :)"
+    });
+  })
 }
+
+
+// exports.changePassword=(req,res)=>{
+// const{oldPass,newPass,email}=req.body;
+// client.query(`SELECT password FROM users where email=${email};`)
+// .then((res)=>{
+//   const Pass=res.password;
+//   if(oldPass===Pass){
+//     res.status(400).json({
+//       message:"Same as new Password"
+//     })
+//   }
+//   else{
+//     client.query(`UPDATE users SET password=${newPass} where email=${email};`)
+//     .then((database_res)=>{
+// res.status(200).json({
+//   message:"Password changed successfully!!"
+// });
+//     }).catch((err)=>{
+//       res.status(500).json({
+//         error:"Internal Server error"
+//       })
+//     })
+//   }
+
+// })
+// }
