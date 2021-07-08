@@ -27,7 +27,7 @@ exports.showUser=(req,res)=>{
   exports.contactUs = (req, res) => {
     const {reason,Name,organisation,region,number,email}=req.body;
   client
-    .query(``)
+    .query(`INSERT INTO contactus (reason,name,organisation,region,number,email) values ('${reason}','${Name}','${organisation}','${region}',${number},'${email}')`)
     .then((data) => {
       res.status(200).json({
         message: "We will contact you soon",
