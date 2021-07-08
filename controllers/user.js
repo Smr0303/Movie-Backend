@@ -34,6 +34,6 @@ exports.showUser=(req,res)=>{
       });
     })
     .catch((err) => {
-      res.status(500).json({ error: "Error from server side try again" });
+      res.status(500).json({ message: "Error from server side try again" });
     });
 };
