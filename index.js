@@ -29,7 +29,7 @@ app.use("/user",userroutes);
 const { checkLogin } = require(`${path.join(__dirname, 'middleware/verify_login.js')}`);
 app.get("/verify_login",checkLogin,(req,res) => {
 
-})
+}) 
 // -------------------------------------------------------------------------------------------------------
 
 app.listen(port, () => {
