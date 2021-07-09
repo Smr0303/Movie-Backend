@@ -236,7 +236,7 @@ for (let i = 0; i < req.body.seats.length; i++) {
           .then((database_res)=>{
             setTimeout(() => {
                 client.query(`UPDATE movies SET blocked = 0, email = '' WHERE date = '${req.body.date}' AND slot = '${req.body.slot}' AND movie_id = ${req.body.movie_id} AND (${seats_query})`)
-              }, 20000);
+              }, 300000);
 
               var instance = new Razorpay({ key_id: `${process.env.razorpay_api_key}`, key_secret: `${process.env.razorpay_secret_key}` })
 
