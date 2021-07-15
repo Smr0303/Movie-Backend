@@ -6,7 +6,7 @@ const authroutes = require("./routes/auth");
 const slotroutes = require("./routes/slot");
 const bookroutes = require("./routes/booking");
 const userroutes = require("./routes/user");
-const cors = require("cors");
+const cors = require("cors"); 
 const client = require("./configurations/db");
 const path = require("path");
 
